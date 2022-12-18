@@ -1,21 +1,20 @@
-use std::env;
-use advent_of_code;
-
-pub fn main()
+pub fn part_one(puzzle_data: &Vec<String>) -> Vec<i32>
 {
-    let cookie = env::var("AOC_TOKEN").unwrap_or(String::new());
-    let res = advent_of_code::read_and_parse_input_data(2022, 1, cookie.as_str(), "\n\n")
-        .unwrap();
-    part_one(res.clone());
-    part_two(res);
+    let mut sums: Vec<i32> = vec![];
+    for inventory in puzzle_data
+    {
+        //println!("{:?}\n\n", inventory.split("\n").collect::<Vec<&str>>());
+        let sum: i32 = inventory.split("\n").map(|s| s.parse::<i32>().unwrap_or(0)).sum();
+        sums.push(sum);
+    }
+    //return sums;
+    sums.sort();
+    sums.reverse();
+    return sums;
 }
 
-fn part_one(puzzle_data: Vec<String>)
+pub fn part_two(puzzle_data: &Vec<String>)
 {
-    println!("Test part one code");
-}
-
-fn part_two(puzzle_data: Vec<String>)
-{
-    println!("Test part two code");
+    let sums = part_one(puzzle_data);
+    println!("{:?}", sums[0..2].iter().sum::<i32>())
 }
