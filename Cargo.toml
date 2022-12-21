@@ -6,4 +6,4 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-advent-of-code = {path = "/Users/phazonic/Documents/Programming/Rust/advent-of-code"}
+aoc-setup = { git = "https://github.com/PhazonicRidley/aoc-setup.git", branch = "main"}
