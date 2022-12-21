@@ -18,47 +18,35 @@ pub fn part_one(puzzle_data: &Vec<String>)
     let mut sums: Vec<i32> = vec![];
     for turn in puzzle_data
     {
-        print!("{}:  ", turn);
         let mut turn_split = turn.split(" ");
         let opposing_move = turn_split.next().unwrap();
         let my_move = turn_split.next().unwrap();
-        assert!(["A", "B", "C"].contains(&opposing_move));
-        assert!(["X", "Y", "Z"] .contains(&my_move));
-        //let mut win_value = 0; // defaults to loss value, no additional points
-        print!("{} + ", dict[my_move]);
-        if my_move == "Z" && opposing_move == "A"
+        if my_move == "Z" && opposing_move == "A"// exception for me playing scissors and the opponent playing rock
         {
             sums.push(3 + 0);
         }
-        else if my_move == "X" && opposing_move == "C"
+        else if my_move == "X" && opposing_move == "C" // exception for opponent playing scissors and me playing rock.
         {
             sums.push(1 + 6);
         }
-        else if dict[my_move] > dict[opposing_move]
+
+        else if dict[my_move] > dict[opposing_move] // The game is won
         {
             sums.push(dict[my_move] + 6); 
-            print!("{} ", 6);
         }
-        else if dict[my_move] < dict[opposing_move]
+        else if dict[my_move] < dict[opposing_move] // The game is lost
         {
             sums.push(dict[my_move] + 0);
-            print!("{} ", 0);
         }
         else if dict[my_move] == dict[opposing_move] // the game is a tie
         {
             sums.push(dict[my_move] + 3); 
-            print!("{} ", 3);
         }
-        println!("= {}", sums[sums.len() - 1]);
     }
     assert!(puzzle_data.len() == sums.len());
     let total: i32 = sums.iter().sum();
-    //println!("{:?}", sums);
-    println!("{}", total);
-    // determine what im playing
-    // determine what opponent is playing
-    // outcome of game?
-    // sum everything
+    println!("Part 1: {}", total);
+
 }
 
 pub fn part_two(puzzle_data: &Vec<String>)
@@ -88,12 +76,12 @@ pub fn part_two(puzzle_data: &Vec<String>)
             _ => panic!("This message should not appear.")
         };
        
-        println!("\nMy move: {}", my_move);
-        println!("{}: {} + {}", turn, my_move, win_value);
+        // println!("\nMy move: {}", my_move);
+        // println!("{}: {} + {}", turn, my_move, win_value);
         sums.push(my_move + win_value);
     }
     assert!(sums.len() == puzzle_data.len());
     let total: i32 = sums.iter().sum();
-    println!("{}", total);
+    println!("Part 2: {}", total);
 
 }

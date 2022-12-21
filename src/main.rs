@@ -30,7 +30,7 @@ fn main() {
 
 fn main_day_2(puzzle_input: &Vec<String>)
 {
-    //day_2::part_one(puzzle_input);
+    day_2::part_one(puzzle_input);
     day_2::part_two(puzzle_input);
 }
 
