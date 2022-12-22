@@ -40,4 +40,5 @@ fn main_day_2(puzzle_input: &Vec<String>)
 fn main_day_3(puzzle_input: &Vec<String>)
 {
     println!("Part 1: {}", day_3::part_one(puzzle_input));
+    println!("Part 2: {}",day_3::part_two(puzzle_input));
 }
