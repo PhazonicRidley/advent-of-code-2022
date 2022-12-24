@@ -1,4 +1,12 @@
 use std::collections::HashSet;
+use aoc_setup;
+
+pub fn solve()
+{
+    let puzzle_data = aoc_setup::get_puzzle_data(2022, 4, "\n");
+    println!("Part 1: {}", part_one(&puzzle_data));
+    println!("Part 2: {}", part_two(&puzzle_data));
+}
 
 pub fn part_one(puzzle_input: &Vec<String>) -> i32 {
     let mut counter = 0;

@@ -1,4 +1,12 @@
-use std::{collections::HashSet};
+use std::collections::HashSet;
+use aoc_setup;
+
+pub fn solve()
+{
+    let puzzle_data = aoc_setup::get_puzzle_data(2022, 3, "\n");
+    println!("Part 1: {}", part_one(&puzzle_data));
+    println!("Part 2: {}", part_two(&puzzle_data));
+}
 
 fn get_priority(ch: char) -> i32
 {

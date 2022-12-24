@@ -1,4 +1,12 @@
 use std::collections::HashMap;
+use aoc_setup;
+
+pub fn solve()
+{
+    let puzzle_data = aoc_setup::get_puzzle_data(2022, 2, "\n");
+    println!("Part 1: {}", part_one(&puzzle_data));
+    println!("Part 2: {}", part_two(&puzzle_data));
+}
 
 fn prep_map<'a>() -> HashMap<&'a str, i32>
 {
