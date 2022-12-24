@@ -1,21 +1,18 @@
-use std::env;
-use advent_of_code;
+use aoc_setup;
 
-pub fn main()
+pub fn solve()
 {
-    let cookie = env::var("AOC_TOKEN").unwrap_or(String::new());
-    let res = advent_of_code::read_and_parse_input_data(2022, 1, cookie.as_str(), "\n")
-        .unwrap();
-    part_one(res.clone());
-    part_two(res);
+    let puzzle_data = aoc_setup::get_puzzle_data(YEAR, DAY, "\n");
+    println!("Part 1: {}", part_one(&puzzle_data));
+    println!("Part 2: {}", part_two(&puzzle_data));
 }
 
-fn part_one(puzzle_data: Vec<String>)
+fn part_one(puzzle_input: &Vec<String>) -> i32
 {
-    println!("Test part one code");
+    return 0;
 }
 
-fn part_two(puzzle_data: Vec<String>)
+fn part_two(puzzle_input: &Vec<String>) -> i32
 {
-    println!("Test part two code");
+    return 0;
 }
