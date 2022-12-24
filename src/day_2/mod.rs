@@ -11,7 +11,7 @@ fn prep_map<'a>() -> HashMap<&'a str, i32>
     dict.insert("Z", 3);
     return dict;
 }
-pub fn part_one(puzzle_data: &Vec<String>)
+pub fn part_one(puzzle_data: &Vec<String>) -> i32
 {
     let dict = prep_map();
 
@@ -45,11 +45,11 @@ pub fn part_one(puzzle_data: &Vec<String>)
     }
     assert!(puzzle_data.len() == sums.len());
     let total: i32 = sums.iter().sum();
-    println!("Part 1: {}", total);
+    return total
 
 }
 
-pub fn part_two(puzzle_data: &Vec<String>)
+pub fn part_two(puzzle_data: &Vec<String>) -> i32
 {
     let mut sums: Vec<i32> = vec![];
     let dict = prep_map();
@@ -82,6 +82,6 @@ pub fn part_two(puzzle_data: &Vec<String>)
     }
     assert!(sums.len() == puzzle_data.len());
     let total: i32 = sums.iter().sum();
-    println!("Part 2: {}", total);
+    return total;
 
 }

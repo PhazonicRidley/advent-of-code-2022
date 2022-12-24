@@ -13,8 +13,9 @@ pub fn part_one(puzzle_data: &Vec<String>) -> Vec<i32>
     return sums;
 }
 
-pub fn part_two(puzzle_data: &Vec<String>)
+pub fn part_two(puzzle_data: &Vec<String>) -> i32
 {
     let sums = part_one(puzzle_data);
-    println!("{:?}", sums[0..2].iter().sum::<i32>())
+    println!("Part 1: {}", sums[0]);
+    return sums[0..2].iter().sum();
 }
