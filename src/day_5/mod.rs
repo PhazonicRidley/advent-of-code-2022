@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use aoc_setup;
 
 
@@ -11,17 +13,17 @@ pub fn solve()
     println!("Part 2: {}", part_two(&puzzle_data));
 }
 
-fn parse_input(puzzle_input: &Vec<String>) -> (Vec<Vec<char>>, Vec<String>)
+fn parse_input(puzzle_input: &Vec<String>) -> (Vec<VecDeque<char>>, Vec<String>)
 {
-
+    
     let crate_rows: Vec<String> = puzzle_input.iter().map(|s| s.to_owned()).take(8).collect();
     let instructions: Vec<String> = puzzle_input.iter().map(|s| s.to_owned()).skip(10).collect();
-    let mut parsed_rows: Vec<Vec<char>> = vec![vec![]; 9];
+    let mut parsed_rows: Vec<Vec<char>> = vec![Vec::new(); 9];
     
     let mut row_idx = 0;
     for row in crate_rows
     {
-        let mut chars = row.chars();
+        let chars = row.chars();
         let mut idx = 0;
         while idx < row.len()
         {
@@ -39,13 +41,16 @@ fn parse_input(puzzle_input: &Vec<String>) -> (Vec<Vec<char>>, Vec<String>)
         row_idx += 1;
     }
 
-    let mut column_stacks: Vec<Vec<char>> = vec![vec![]; 9];
+    let mut column_stacks: Vec<VecDeque<char>> = vec![VecDeque::new(); 9];
     let mut col_idx = 0;
     for row in parsed_rows
     {
         for ch in row
         {
-            column_stacks[col_idx].push(ch);
+            if ch != ' '
+            {
+                column_stacks[col_idx].push_back(ch);
+            }
             col_idx += 1;
         }
         col_idx = 0;
@@ -55,12 +60,44 @@ fn parse_input(puzzle_input: &Vec<String>) -> (Vec<Vec<char>>, Vec<String>)
     return (column_stacks, instructions);
 }
 
-fn part_one(puzzle_input: &Vec<String>) -> i32
+fn process_instruction(instruction: &String) -> (usize, usize, usize)
 {
-    return 0;
+    let split:  Vec<&str> = instruction.split(" ").collect();
+    let result_tuple = 
+    (split[1].parse().unwrap(), split[3].parse::<usize>().unwrap() - 1, split[5].parse::<usize>().unwrap() - 1);
+
+    return result_tuple;
 }
 
-fn part_two(puzzle_input: &Vec<String>) -> i32
+fn move_crates(puzzle_input: &Vec<String>, keep_order: bool) -> String
 {
-    return 0;
+    let (mut stacks, instructions) = parse_input(puzzle_input);
+    for instruction in instructions
+    {
+        let (quantity, source, destination) = process_instruction(&instruction);
+        let moved_data: &mut Vec<char> = &mut stacks[source].drain(0..quantity).collect();
+        if keep_order
+        {
+            moved_data.reverse();
+        }
+
+        for item in moved_data
+        {
+            stacks[destination].push_front(item.to_owned());
+        } 
+    }
+
+    return stacks.iter().map(|v| v[0]).collect();
+
+    
+}
+
+fn part_one(puzzle_input: &Vec<String>) -> String
+{
+    return move_crates(puzzle_input, false);
+}
+
+fn part_two(puzzle_input: &Vec<String>) -> String
+{
+    return move_crates(puzzle_input, true);
 }
