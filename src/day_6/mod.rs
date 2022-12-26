@@ -24,7 +24,7 @@ fn process(puzzle_input: &String, num_unique_chars: usize) -> i32
         }
         idx += 1;
     }
-    return 0;
+    return -1; // failed to find anything
 }
 
 fn part_one(puzzle_input: &String) -> i32
