@@ -17,7 +17,6 @@ fn process(puzzle_input: &String, num_unique_chars: usize) -> i32
     while idx < puzzle_input.len()
     {
         let buf_iter = chars.clone().skip(idx).take(num_unique_chars);
-        let buffer: Vec<char> = buf_iter.clone().collect();
         let checker: HashSet<char> = HashSet::from_iter(buf_iter);
         if checker.len() == num_unique_chars
         {
