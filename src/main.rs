@@ -1,4 +1,7 @@
-#![warn(dead_code)]
+#![allow(dead_code)]
+#![feature(hash_drain_filter)]
+#![feature(drain_filter)]
+
 // mod day_1;
 // mod day_2;
 // mod day_3;
