@@ -4,20 +4,30 @@ use aoc_setup;
 
 pub fn solve() {
     let puzzle_data = aoc_setup::get_puzzle_data(2022, 7, "\n");
-    println!("Part 1: {}", part_one_but_good(&puzzle_data));
+    println!("Part 1: {}", part_one(&puzzle_data));
     println!("Part 2: {}", part_two(&puzzle_data));
 }
 
 fn folder_content_size(contents: &Vec<String>) -> i32 {
     let mut sums: Vec<i32> = vec![];
+    let mut multiplier = 0;
     for entry in contents {
         let entry_split: Vec<&str> = entry.split(" ").collect();
+        //println!("{:?}", entry_split);
         if let Ok(size) = entry_split[0].parse::<i32>() {
             sums.push(size);
         }
+        if entry.contains("..") {
+            multiplier += 1;
+        }
     }
 
-    return sums.iter().sum();
+    // if multiplier > 1 {
+    //     multiplier =- 1;
+    // }
+    println!("multiplier: {}", multiplier);
+
+    return (sums.iter().sum::<i32>()) * if multiplier != 0 { multiplier } else { 1 };
 }
 
 fn part_one(puzzle_input: &Vec<String>) -> i32 {
@@ -34,7 +44,7 @@ fn part_one(puzzle_input: &Vec<String>) -> i32 {
     let mut cd_str = String::new();
     let max_cmd_index = command_indices[0];
 
-    while command_idx <= max_cmd_index  {
+    while command_idx <= max_cmd_index {
         let line_split: Vec<&str> = puzzle_input[command_idx].split(" ").collect();
         if line_split[1] == "cd" {
             if line_split[2] != ".." {
@@ -43,11 +53,13 @@ fn part_one(puzzle_input: &Vec<String>) -> i32 {
                 dir_sums.insert(cd_str.clone(), 0);
             } else {
                 let mut total_dir_sum = dir_sums.get(&cd_str).unwrap().to_owned();
-                let sub_dirs: HashMap<String, i32> = dir_sums
-                    .drain_filter(|k, _v| k.contains(&(cd_str.clone() + "/")))
-                    .collect();
+                let sub_dir_sums: i32 = dir_sums
+                    .iter()
+                    .filter(|(k, _)| k.contains(&(cd_str.clone() + "/")))
+                    .map(|(_, &v)| v)
+                    .sum();
 
-                total_dir_sum += sub_dirs.values().sum::<i32>();
+                total_dir_sum += sub_dir_sums;
                 dir_sums.insert(cd_str.clone(), total_dir_sum);
                 current_directory_path.remove(current_directory_path.len() - 1);
                 cd_str = current_directory_path.join("/").to_string();
@@ -60,40 +72,26 @@ fn part_one(puzzle_input: &Vec<String>) -> i32 {
             dir_sums.insert(cd_str.clone(), folder_content_size(&slice));
             command_idx = next_idx;
         }
-        println!("current directory: {}", cd_str);
-        println!("HashMap: {:?}", dir_sums);
+
         command_indices.drain_filter(|n| n.to_owned() <= command_idx);
     }
 
     dir_sums.insert(String::from("/"), dir_sums.values().sum());
-    let final_sums: i32 = dir_sums.values().filter(|x| **x < 100000).sum();
+    let mut counter = 0;
+    let mut final_sum = 0;
+    for value in dir_sums.values() {
+        if value <= &100000 {
+            counter += 1;
+            final_sum += value;
+        }
+    }
     println!("Final Dir Sums: {:?}", dir_sums);
-    return final_sums;
+    println!("Number under 100000: {}", counter);
+    println!("Length: {:?}", dir_sums.len());
+    return final_sum;
 }
 
-fn part_one_but_good(puzzle_input: &Vec<String>) -> i32
-{
-    let mut ls_indices: Vec<usize> = vec![];
-    for i in 0..puzzle_input.len() {
-        if puzzle_input[i] == "$ ls" {
-            ls_indices.push(i);
-        }
-    }
-    ls_indices.reverse();
-    let mut command_idx = 0;
 
-    let mut sums: Vec<i32> = vec![];
-    let max_idx = ls_indices[0];
-    while command_idx <= max_idx {
-        let next_idx = ls_indices.pop().unwrap_or(puzzle_input.len());
-        let dir_sum = folder_content_size(&puzzle_input[command_idx..next_idx].to_vec());
-        if dir_sum < 100000 {
-            sums.push(dir_sum);
-        }
-        command_idx = next_idx;
-    }
-    return sums.iter().sum();
-}
 
 fn part_two(puzzle_input: &Vec<String>) -> i32 {
     return 0;
