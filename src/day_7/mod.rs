@@ -10,25 +10,21 @@ pub fn solve() {
 
 fn folder_content_size(contents: &Vec<String>) -> i32 {
     let mut sums: Vec<i32> = vec![];
-    let mut multiplier = 0;
     for entry in contents {
         let entry_split: Vec<&str> = entry.split(" ").collect();
         //println!("{:?}", entry_split);
         if let Ok(size) = entry_split[0].parse::<i32>() {
             sums.push(size);
         }
-        // if entry.contains("..") {
-        //     multiplier += 1;
-        // }
+        
     }
 
     
-    println!("multiplier: {}", multiplier);
 
-    return (sums.iter().sum::<i32>()); // * if multiplier != 0 { multiplier } else { 1 };
+    return sums.iter().sum(); 
 }
 
-fn part_one(puzzle_input: &Vec<String>) -> i32 {
+fn get_command_indicies(puzzle_input: &Vec<String>) -> Vec<usize> {
     let mut command_indices: Vec<usize> = vec![];
     for i in 0..puzzle_input.len() {
         if puzzle_input[i].chars().nth(0).unwrap() == '$' {
@@ -36,6 +32,11 @@ fn part_one(puzzle_input: &Vec<String>) -> i32 {
         }
     }
     command_indices.reverse();
+    return command_indices;
+}
+
+fn get_folder_data(puzzle_input: &Vec<String>) -> HashMap<String, i32> {
+    let mut command_indices = get_command_indicies(puzzle_input);
     let mut current_directory_path: Vec<&str> = vec![];
     let mut dir_sums: HashMap<String, i32> = HashMap::new();
     let mut counted_dirs: Vec<String> = vec![];
@@ -77,21 +78,50 @@ fn part_one(puzzle_input: &Vec<String>) -> i32 {
         command_indices.drain_filter(|&mut n| n <= command_idx);
     }
 
-    
-    let mut counter = 0;
+    return dir_sums;
+}
+
+fn part_one(puzzle_input: &Vec<String>) -> i32 {
+   
+    let dir_sums = get_folder_data(puzzle_input);
+    let mut root_dirs_sums: i32 = dir_sums.get("/").unwrap().clone();
+
     let mut final_sum = 0;
     for value in dir_sums.values() {
         if value <= &100000 {
-            counter += 1;
             final_sum += value;
         }
     }
-
     return final_sum;
 }
 
 
 
 fn part_two(puzzle_input: &Vec<String>) -> i32 {
-    return 0;
+    let mut dir_sums = get_folder_data(puzzle_input);
+    let mut root_dirs_sums = dir_sums.get("/").unwrap().clone();
+    for (key, value) in &dir_sums {
+        let key_split: Vec<&str> = key.split("/").collect();
+        if key_split.len() == 3 {
+           // println!("{:?}", key);
+            root_dirs_sums += value;
+        }
+    }
+
+    println!("Root size: {}", root_dirs_sums);
+    dir_sums.insert(String::from("/"), root_dirs_sums);
+    let unused_space = 70000000 - root_dirs_sums;
+    let needed_space = 30000000 - unused_space;
+    let mut value_to_delete = 70000000;
+    
+    println!("Needed space: {}", needed_space);
+    println!("Unused space: {}", unused_space);
+    for &value in dir_sums.values() {
+        if value > needed_space && value < value_to_delete {
+            //println!("{}", value);
+            value_to_delete = value;
+        }
+    }
+
+    return value_to_delete;
 }
