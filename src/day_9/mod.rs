@@ -5,7 +5,7 @@ use aoc_setup;
 pub fn solve() {
     let puzzle_data = aoc_setup::get_puzzle_data(2022, 9, "\n");
     println!("Part 1: {}", part_one(&puzzle_data));
-    println!("Part 2: {}", part_two(&puzzle_data));
+    //println!("Part 2: {}", part_two(&puzzle_data));
 }
 
 fn parse_input(puzzle_input: &Vec<String>) -> Vec<(char, i32)> {
@@ -21,15 +21,12 @@ fn parse_input(puzzle_input: &Vec<String>) -> Vec<(char, i32)> {
     return result;
 }
 
-fn part_one(puzzle_input: &Vec<String>) -> i32 {
+fn do_problem(puzzle_input: &Vec<String>, number_of_knots: usize) -> i32 {
     let input = parse_input(puzzle_input);
-    let mut rope: Rope = Rope::new(10);
+    let mut rope: Rope = Rope::new(number_of_knots);
 
     for (direction, value) in input {
-        // println!(
-        //     "Head is at: {:?}, Tail is at: {:?}",
-        //     rope.head_coord, rope.tail_coord
-        // );
+        println!("{} {}", direction, value);
         match direction {
             'U' => rope.up(value),
             'R' => rope.right(value),
@@ -44,8 +41,12 @@ fn part_one(puzzle_input: &Vec<String>) -> i32 {
     return res as i32;
 }
 
+fn part_one(puzzle_input: &Vec<String>) -> i32 {
+    return do_problem(puzzle_input, 2);
+}
+
 fn part_two(puzzle_input: &Vec<String>) -> i32 {
-    return 0;
+    return do_problem(puzzle_input, 10);
 }
 
 #[derive(Debug)]
@@ -73,42 +74,55 @@ impl Rope {
         return result;
     }
 
-    fn update_tail(&mut self, axis: usize, mut previous_head: [i32; 2]) {
-        let stopping_point = self.knots.len() - 1;
-        for idx in 0..stopping_point{
+    fn update_tail(&mut self, axis: usize) {
+        for idx in 0..self.knots.len() - 1 {
+
             let next_idx = idx + 1;
+            
             let segment_distance = self.get_distance_head_tail(idx, next_idx);
-            if segment_distance == f32::sqrt(5.0) {
-                self.knots[next_idx] = previous_head;
+            let x_offset = self.knots[idx][0] - self.knots[next_idx][0];
+            let y_offset = self.knots[idx][1] - self.knots[next_idx][1];
+            //println!("x offset {}, y offset: {}, segment distance {}", x_offset, y_offset, segment_distance);
+            if segment_distance == f32::sqrt(5.0) || segment_distance == f32::sqrt(8.0) {
+                let x_direction = if x_offset.is_negative() { -1 } else { 1 };
+                let y_direction = if y_offset.is_negative() { -1 } else { 1 };
+
+                self.knots[next_idx][0] += x_direction; // TODO: move up/down diagonally instead of using previous
+                self.knots[next_idx][1] += y_direction; // TODO: change it so direction is calculated differently for each axis 
             } else if segment_distance >= 2.0 {
                 let offset = self.knots[idx][axis] - self.knots[next_idx][axis];
                 let direction = if offset.is_negative() { -1 } else { 1 };
                 self.knots[next_idx][axis] += direction;
             }
 
-            previous_head = self.knots[next_idx].clone();
         }
-        self.tail_locations.insert(self.knots[self.knots.len() - 1].clone());
-    //    // println!("Tail distance from head: {}", tail_distance);
-    //     if tail_distance == f32::sqrt(5.0) {
-    //        self.tail_coord = previous_head; // previous axis position of head before it was incremented 
-    //     }
-    //     else if tail_distance >= 2.0 {
-    //         let offset = self.head_coord[axis] - self.tail_coord[axis];
-    //         let direction = if offset.is_negative() { -1 } else { 1 };
-    //         self.tail_coord[axis] += direction;
-    //     }
-    //     self.tail_locations.insert(self.tail_coord.clone());
+        self.tail_locations
+            .insert(self.knots[self.knots.len() - 1].clone());
     }
 
     fn move_rope(&mut self, displacement: i32, axis: usize) {
-       
         let direction = if displacement.is_negative() { -1 } else { 1 };
-        for _ in 0..displacement.abs() {
-            let previous_head = self.knots[0].clone();
+        for i in 0..displacement.abs() {
             self.knots[0][axis] += direction;
-            self.update_tail(axis, previous_head);
+            self.update_tail(axis);
+            assert!(self.verify_tail(), "Invalid tail found at {} out of a displacement of {}", i, displacement);
         }
+    }
+
+    fn verify_tail(&self) -> bool {
+        for idx in 0..self.knots.len() - 1 {
+            let next_idx = idx + 1;
+            let distance = self.get_distance_head_tail(idx, next_idx);
+            if distance != 1.0 && distance != f32::sqrt(2.0) && distance != 0.0 {
+                println!(
+                    "Tail is invalid due to segment starting at {} (Point: {:?}) and ending at {} (Point: {:?}) Had a distance of {}\n, full tail: {:?}\n",
+                    idx, self.knots[idx], next_idx,  self.knots[next_idx], distance, self.knots);
+                return false;
+            }
+
+        }
+
+        return true;
     }
 
     fn left(&mut self, displacement: i32) {
@@ -127,5 +141,3 @@ impl Rope {
         self.move_rope(-displacement, 1);
     }
 }
-
-
